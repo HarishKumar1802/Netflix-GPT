@@ -17,16 +17,17 @@ If you are developing a production application, we recommend using TypeScript wi
 
 
 # Features
-- login/sing up 
-    - Sign In / Sign- up Form
-    - redirect to browse page.
-- Browse (after autentication)
-    - Header
-    - Main Movie
-        - Trailer in background
-        - Title and Description
-        - Movie Suggestion
-            - Movie List
+
+- Authentication
+  - Sign-in / Sign-up form
+  - Redirect to Browse page upon successful authentication
+- Browse (post-authentication)
+  - Header
+  - Featured movie section
+    - Background trailer
+    - Title and description
+    - Suggested movies
+      - Movie list
 - Netflix GPT
-    -Search Bar
-    - Movie Suggestions
+  - Search bar
+  - AI-driven movie suggestions
