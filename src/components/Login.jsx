@@ -1,11 +1,19 @@
 import Header from '@/components/Header'
-import { useState } from 'react'
+// import { checkValidData } from '@/utils/validation'
+import { useRef, useState } from 'react'
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true)
+  const email = useRef(null)
+  const password = useRef(null)
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm)
+  }
+
+  const handleBtnClick = () => {
+    // validate the form data
+    // checkValidData(email, password)
   }
 
   return (
@@ -27,7 +35,7 @@ const Login = () => {
               {isSignInForm ? 'Sign In' : 'Sign Up'}
             </h1>
           </div>
-          <div className="flex flex-col gap-8 w-full mb-2">
+          <div className="flex flex-col gap-8 w-full mb-4">
             {!isSignInForm && (
               <input
                 type="text"
@@ -36,16 +44,21 @@ const Login = () => {
               />
             )}
             <input
+              ref={email}
               type="text"
               placeholder="Email Address"
               className="p-2 bg-white/5 border border-white/15 rounded-xs"
             />
             <input
+              ref={password}
               type="password"
               placeholder="Password"
               className="p-2 bg-white/5 border border-white/15 rounded-xs"
             />
-            <button className="bg-red-800 p-2 rounded-xs font-semibold cursor-pointer uppercase hover:bg-red-700">
+            <button
+              className="bg-red-800 p-2 rounded-xs font-semibold cursor-pointer uppercase hover:bg-red-700"
+              onClick={handleBtnClick}
+            >
               {isSignInForm ? 'Sign In' : 'Sign Up'}
             </button>
           </div>
