@@ -1,77 +1,121 @@
 import Header from '@/components/Header'
-// import { checkValidData } from '@/utils/validation'
+import { checkValidData } from '@/utils/validation'
 import { useRef, useState } from 'react'
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true)
+  const [errorMessage, setErrorMessage] = useState(null)
   const email = useRef(null)
   const password = useRef(null)
+  const name = useRef(null)
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm)
   }
 
   const handleBtnClick = () => {
-    // validate the form data
-    // checkValidData(email, password)
+    const message = checkValidData(email.current.value, password.current.value, name.current.value)
+    setErrorMessage(message)
   }
 
   return (
-    <div className="relative min-h-screen bg-black text-white">
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
       <Header />
-      <div className="absolute inset-0">
+      <div className="absolute inset-0" aria-hidden="true">
         <img
-          className="h-full w-full object-cover opacity-75"
+          className="h-full w-full object-cover opacity-60"
           src="https://cdn.mos.cms.futurecdn.net/rDJegQJaCyGaYysj2g5XWY.jpg"
-          alt="Netflix background"
+          alt=""
         />
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/50 via-transparent to-black" />
       </div>
 
-      <section className="relative flex min-h-screen items-center justify-center">
-        <form className="flex flex-col justify-center w-3/12  bg-black text-white p-10 rounded-xs">
+      <main className="relative flex min-h-screen items-center justify-center px-4 pb-10 pt-20 sm:px-6">
+        <form
+          onSubmit={(event) => {
+            event.preventDefault()
+            handleBtnClick()
+          }}
+          className="w-full max-w-md rounded-sm bg-black/85 px-6 py-8 shadow-2xl shadow-black/30 sm:px-12 sm:py-12"
+        >
           <div className="mb-8">
-            <h1 className="font-bold text-2xl">
+            <h1 className="text-3xl font-bold tracking-tight">
               {isSignInForm ? 'Sign In' : 'Sign Up'}
             </h1>
+            <p className="mt-2 text-sm text-white/60">
+              {isSignInForm
+                ? 'Welcome back. Enter your details to continue.'
+                : 'Create an account to get started.'}
+            </p>
           </div>
-          <div className="flex flex-col gap-8 w-full mb-4">
+
+          <div className="flex w-full flex-col gap-5">
             {!isSignInForm && (
-              <input
-                type="text"
-                placeholder="Email Address"
-                className="p-2 bg-white/5 border border-white/15 rounded-xs"
-              />
+              <div className="flex flex-col gap-2">
+                <label htmlFor="full-name" className="text-sm font-medium text-white/80">
+                  Full name
+                </label>
+                <input
+                  ref={name}
+                  id="full-name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Your name"
+                  className="rounded-sm border border-white/20 bg-white/5 px-4 py-3 text-sm placeholder:text-white/40 focus:border-white/60 focus-visible:outline-none"
+                />
+              </div>
             )}
-            <input
-              ref={email}
-              type="text"
-              placeholder="Email Address"
-              className="p-2 bg-white/5 border border-white/15 rounded-xs"
-            />
-            <input
-              ref={password}
-              type="password"
-              placeholder="Password"
-              className="p-2 bg-white/5 border border-white/15 rounded-xs"
-            />
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="text-sm font-medium text-white/80">
+                Email address
+              </label>
+              <input
+                ref={email}
+                id="email"
+                type="email"
+                autoComplete="email"
+                placeholder="name@example.com"
+                className="rounded-sm border border-white/20 bg-white/5 px-4 py-3 text-sm placeholder:text-white/40 focus:border-white/60 focus-visible:outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="password" className="text-sm font-medium text-white/80">
+                Password
+              </label>
+              <input
+                ref={password}
+                id="password"
+                type="password"
+                autoComplete={isSignInForm ? 'current-password' : 'new-password'}
+                placeholder="Enter your password"
+                className="rounded-sm border border-white/20 bg-white/5 px-4 py-3 text-sm placeholder:text-white/40 focus:border-white/60 focus-visible:outline-none"
+              />
+            </div>
+            {errorMessage && (
+              <p role="alert" className="text-sm font-medium text-red-400">
+                {errorMessage}
+              </p>
+            )}
             <button
-              className="bg-red-800 p-2 rounded-xs font-semibold cursor-pointer uppercase hover:bg-red-700"
-              onClick={handleBtnClick}
+              type="submit"
+              className="mt-1 rounded-sm bg-red-700 px-4 py-3 font-semibold transition-colors hover:bg-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               {isSignInForm ? 'Sign In' : 'Sign Up'}
             </button>
           </div>
-          <p
-            className=" text-sm text-white/60 cursor-pointer"
-            onClick={toggleSignInForm}
-          >
-            {isSignInForm
-              ? ' Still not a user? Create new account'
-              : 'Already Registered? Sign In'}
+
+          <p className="mt-4 text-sm text-white/60">
+            {isSignInForm ? 'New to Netflix?' : 'Already have an account?'}{' '}
+            <button
+              type="button"
+              onClick={toggleSignInForm}
+              className="font-semibold text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {isSignInForm ? 'Sign up now' : 'Sign in'}
+            </button>
           </p>
         </form>
-      </section>
+      </main>
     </div>
   )
 }
