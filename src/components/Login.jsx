@@ -1,8 +1,16 @@
 import Header from '@/components/Header'
 import { checkValidData } from '@/utils/validation'
+import { auth } from '@/utils/firebase'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth'
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
+  const navigate = useNavigate()
   const [isSignInForm, setIsSignInForm] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
   const email = useRef(null)
@@ -13,9 +21,30 @@ const Login = () => {
     setIsSignInForm(!isSignInForm)
   }
 
-  const handleBtnClick = () => {
-    const message = checkValidData(email.current.value, password.current.value, name.current.value)
+  const handleBtnClick = async () => {
+    const message = checkValidData(
+      email.current.value,
+      password.current.value,
+      isSignInForm ? undefined : name.current.value
+    )
     setErrorMessage(message)
+    if (message) return
+
+    try {
+      if (isSignInForm) {
+        await signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+      } else {
+        const { user } = await createUserWithEmailAndPassword(
+          auth,
+          email.current.value,
+          password.current.value
+        )
+        await updateProfile(user, { displayName: name.current.value })
+      }
+      navigate('/browse')
+    } catch (error) {
+      setErrorMessage(`${error.code}: ${error.message}`)
+    }
   }
 
   return (
