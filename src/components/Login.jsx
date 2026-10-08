@@ -7,10 +7,11 @@ import {
   updateProfile,
 } from 'firebase/auth'
 import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { addUser } from '@/utils/userSlice'
 
 const Login = () => {
-  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isSignInForm, setIsSignInForm] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
   const email = useRef(null)
@@ -32,7 +33,11 @@ const Login = () => {
 
     try {
       if (isSignInForm) {
-        await signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+        await signInWithEmailAndPassword(
+          auth,
+          email.current.value,
+          password.current.value
+        )
       } else {
         const { user } = await createUserWithEmailAndPassword(
           auth,
@@ -40,8 +45,10 @@ const Login = () => {
           password.current.value
         )
         await updateProfile(user, { displayName: name.current.value })
+        // onAuthStateChanged fired before the name was saved, so refresh the store
+        const { uid, email: userEmail, displayName } = auth.currentUser
+        dispatch(addUser({ uid, email: userEmail, displayName }))
       }
-      navigate('/browse')
     } catch (error) {
       setErrorMessage(`${error.code}: ${error.message}`)
     }
@@ -81,7 +88,10 @@ const Login = () => {
           <div className="flex w-full flex-col gap-5">
             {!isSignInForm && (
               <div className="flex flex-col gap-2">
-                <label htmlFor="full-name" className="text-sm font-medium text-white/80">
+                <label
+                  htmlFor="full-name"
+                  className="text-sm font-medium text-white/80"
+                >
                   Full name
                 </label>
                 <input
@@ -95,7 +105,10 @@ const Login = () => {
               </div>
             )}
             <div className="flex flex-col gap-2">
-              <label htmlFor="email" className="text-sm font-medium text-white/80">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-white/80"
+              >
                 Email address
               </label>
               <input
@@ -108,14 +121,19 @@ const Login = () => {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor="password" className="text-sm font-medium text-white/80">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-white/80"
+              >
                 Password
               </label>
               <input
                 ref={password}
                 id="password"
                 type="password"
-                autoComplete={isSignInForm ? 'current-password' : 'new-password'}
+                autoComplete={
+                  isSignInForm ? 'current-password' : 'new-password'
+                }
                 placeholder="Enter your password"
                 className="rounded-sm border border-white/20 bg-white/5 px-4 py-3 text-sm placeholder:text-white/40 focus:border-white/60 focus-visible:outline-none"
               />
