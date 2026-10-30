@@ -44,10 +44,18 @@ const Login = () => {
           email.current.value,
           password.current.value
         )
-        await updateProfile(user, { displayName: name.current.value })
+        await updateProfile(user, {
+          displayName: name.current.value,
+          photoURL: 'https://avatars.githubusercontent.com/u/12824231?v=4',
+        })
         // onAuthStateChanged fired before the name was saved, so refresh the store
-        const { uid, email: userEmail, displayName } = auth.currentUser
-        dispatch(addUser({ uid, email: userEmail, displayName }))
+        const {
+          uid,
+          email: userEmail,
+          displayName,
+          photoURL,
+        } = auth.currentUser
+        dispatch(addUser({ uid, email: userEmail, displayName, photoURL }))
       }
     } catch (error) {
       setErrorMessage(`${error.code}: ${error.message}`)
